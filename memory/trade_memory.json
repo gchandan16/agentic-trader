@@ -1,0 +1,7 @@
+{"time": "2026-03-04 10:15:21", "decision": {"action": "BUY", "confidence": 0.82, "reason": "Trend + volatility + volume alignment"}, "market": {"price": 67050.5, "trend": "UP", "volatility": "HIGH", "volume_strength": "STRONG"}}
+
+{"time": "2026-03-04 10:20:25", "decision": {"action": "HOLD", "confidence": 0.0, "reason": "Strategy returned HOLD"}, "market": {"price": 67020.1, "trend": "UP", "volatility": "LOW", "volume_strength": "WEAK"}}
+
+{"time": "2026-03-04 10:25:31", "decision": {"action": "SELL", "confidence": 0.76, "reason": "Downtrend with strong selling pressure"}, "market": {"price": 66890.3, "trend": "DOWN", "volatility": "HIGH", "volume_strength": "STRONG"}}
+
+{"time": "2026-03-04 10:30:40", "decision": {"action": "HOLD", "confidence": 0.0, "reason": "Low volatility market"}, "market": {"price": 66910.7, "trend": "DOWN", "volatility": "LOW", "volume_strength": "WEAK"}}
