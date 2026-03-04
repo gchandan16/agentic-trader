@@ -1,24 +1,12 @@
 from logs.logger import logger
 from config.settings import SYMBOL
-from config.trade_config import (TRADE_SIZE,STOP_LOSS_PERCENT,TAKE_PROFIT_PERCENT)
+from config.trade_config import (TRADE_SIZE,STOP_LOSS_PERCENT,TAKE_PROFIT_PERCENT,LIVE_TRADING)
 
 class ExecutionAgent:
     def __init__(self,exchange):
         self.exchange = exchange
 
 
-    def execution_trade(self,signal):
-
-        if  signal == "BUY":
-            logger.info("ExecutionAgent:BUY order exxecuted ")
-            print("Paper Traden -> Buy")
-
-        elif signal == "SELL":
-            logger.info("ExecutionAgent:SELL order executed ")      
-            print("Paper Trade -> SELL")
-        else:
-            logger.info("ExecutionAgnet :No Trade executed")
-            print("Paper Trade -> No trade Executed")     
 
 
     def calculate_position_size(self, price):
@@ -48,6 +36,11 @@ class ExecutionAgent:
         price = market_state["price"]
 
         size = self.calculate_position_size(price)
+        #MINIMUM Size Check
+        if size < 0.00001:
+            print("Trade size too small & skipping")
+            logger.warning("ExecutionAGnet: Trade skipped due to small size")
+            return 
 
         stop_loss = self.calculate_stop_loss(price, signal)
 
@@ -64,6 +57,23 @@ class ExecutionAgent:
         print("Size:", size)
         print("Entry:", price)
         print("Stop Loss:", stop_loss)
-        print("Take Profit:", take_profit)        
+        print("Take Profit:", take_profit)    
+
+        # SAFTY SWITCH
+        if not LIVE_TRADING:
+            print("Paper Trade Mode - No real order sent")   
+            return
+
+        try:
+            side=signal.lower()
+
+            order =self.exchange.create_market_order(SYMBOL,side,size)   
+
+            logger.info(f"Order placed :{order}")
+            print("Real order executed",order)
+
+        except Exception as e:
+            logger.error(f"Execution Error :{str(e)}")
+            print("Trade execution failed",e)      
      
 
