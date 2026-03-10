@@ -253,6 +253,62 @@ class DeltaClient:
             logger.error(f"Open orders error: {e}")
             return []
 
+    def place_stop_loss(self, product_symbol, side, size, stop_price):
+        try:
+            opposite = "sell" if side == "buy" else "buy"
+
+            body = {
+                "product_symbol": product_symbol,
+                "side": opposite,
+                "order_type": "stop_market_order",
+                "size": int(size),
+                "stop_price": str(stop_price)
+            }
+
+            logger.info(f"Placing stop loss: {body}")
+
+            data = self._private_post("/v2/orders", body)
+
+            if data.get("success"):
+                order = data.get("result", {})
+                logger.info(f"Stop loss placed: {order.get('id')}")
+                return order
+            else:
+                logger.error(f"Stop loss failed: {data}")
+                return None
+
+        except Exception as e:
+            logger.error(f"Stop loss error: {e}")
+            return None
+    def place_take_profit(self, product_symbol, side, size, take_price):
+        try:
+
+            opposite = "sell" if side == "buy" else "buy"
+
+            body = {
+                "product_symbol": product_symbol,
+                "side": opposite,
+                "order_type": "take_profit_market_order",
+                "size": int(size),
+                "stop_price": str(take_price)
+            }
+
+            logger.info(f"Placing take profit: {body}")
+
+            data = self._private_post("/v2/orders", body)
+
+            if data.get("success"):
+                order = data.get("result", {})
+                logger.info(f"Take profit placed: {order.get('id')}")
+                return order
+            else:
+                logger.error(f"Take profit failed: {data}")
+                return None
+
+        except Exception as e:
+            logger.error(f"Take profit error: {e}")
+            return None
+
     # ──────────────────────────────────────────────
     # AUTH TEST
     # ──────────────────────────────────────────────

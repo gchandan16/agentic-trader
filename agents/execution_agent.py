@@ -63,6 +63,14 @@ class ExecutionAgent:
             order_id = order.get("id", "unknown")
             logger.info(f"✅ Order success: {order}")
             print(f"✅ Order placed! ID: {order_id}")
+
+            #Place Stop loss order
+            sl_order = self.client.place_stop_loss(PRODUCT_SYMBOL,side,size,sl)
+
+            print(f"🛑 Stop Loss order placed at {sl}")
+
+            #Place Take Profit
+            tp_order = self.client.place_take_profit(PRODUCT_SYMBOL,side,size,tp)
         else:
             logger.error("Order placement returned None")
             print("❌ Order failed — check logs")

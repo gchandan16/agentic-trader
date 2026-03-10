@@ -6,6 +6,9 @@ from agents.risk_agent import RiskAgent
 from agents.execution_agent import ExecutionAgent
 from agents.memory_agent import MemoryAgent
 from agents.llm_agent import LLMAgent
+from agents.position_agent import PositionAgent
+from agents.reflection_agent import ReflectionAgent
+from logs.logger import logger
 
 from exchange.delta_client import DeltaClient
 
@@ -24,8 +27,10 @@ class Orchestrator:
         self.strategy_agent  = StrategyAgent()
         self.llm_agent       = LLMAgent()
         self.risk_agent      = RiskAgent()
+        self.position_agent  = PositionAgent(self.client)
         self.execution_agent = ExecutionAgent(self.client)   # pass full client
         self.memory_agent    = MemoryAgent()
+        self.reflection_agent = ReflectionAgent()
 
     def run(self):
         print("\n🤖 Agentic Trader Started!")
@@ -52,18 +57,32 @@ class Orchestrator:
                 decision = self.llm_agent.decide(market_state, signal)
                 print(f"🧠 AI Decision: {decision}")
 
-                # Step 4: Risk check
+                action=decision["action"]
+                confidence=decision["confidence"]
 
-                approved = self.risk_agent.approve_trade(decision["action"])
+                # Step 4:AI Confidence Filter
+                if confidence < 0.7:
+                    print("⚠️ Low confidence - skipping trade")
+                    continue
 
-                if approved:
-                    # Step 5: Execute
-                    self.execution_agent.execute_trade(decision["action"], market_state)
+                # Step 5: Risk check
+                if not self.risk_agent.approve_trade(decision["action"]):
+                    print("❌ RiskAgent rejected trade")
+                    continue
 
-                    # Step 6: Remember
-                    self.memory_agent.store_trade(decision, market_state)
-                else:
-                    print("🚫 Trade rejected by RiskAgent")
+                # Step 6 
+                if self.position_agent.has_open_position():
+                    print("Position already open -skipping the trade")    
+
+                
+                # Step 7
+                self.execution_agent.execute_trade(action,market_state)
+
+                # Step 8 
+                self.memory_agent.store_trade(decision,market_state)
+                # Step 9
+                self.reflection_agent.analyze_trades()
+                logger.info("Trading cycle completed")
 
             except Exception as e:
                 print(f"❌ Cycle error: {e}")
