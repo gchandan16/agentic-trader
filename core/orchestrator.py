@@ -42,7 +42,7 @@ class Orchestrator:
                     time.sleep(60)
                     continue
 
-                print(f"📈 Market: {market_state}")
+                print(f"k Market: {market_state}")
 
                 # Step 2: Generate signal
                 signal = self.strategy_agent.generate_signal(market_state)
