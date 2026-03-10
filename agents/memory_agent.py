@@ -6,7 +6,7 @@ class MemoryAgent:
     def __init__(self):
         self.file = "memory/trade_memory.json"
 
-    def stroe_trade(self,decision,market_state):
+    def store_trade(self,decision,market_state):
         trade_record={
             "time" :str(datetime.now()),
             "decision":decision,

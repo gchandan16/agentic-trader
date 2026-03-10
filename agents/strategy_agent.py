@@ -24,7 +24,8 @@ class StrategyAgent:
 
         #Otherwise stay safe
         else:
-            signal="HOLD"      
+            signal="HOLD"  
+
 
         logger.info(f"Strategy Signal :{signal}")    
 

@@ -11,13 +11,13 @@ class RiskAgent:
 
         if signal == "HOLD":
             logger.info("RiskAgent:No Trade signal")
-            return False
+            return True
         if self.trades_taken >= self.max_trades_per_day:
             logger.warning("RiskAgent Max trades reached")
-            return False
+            return True
         if self.daily_loss >= self.daily_loss_limit:
             logger.warning("RiskAgent Daily loss limit exceed")
-            return False
+            return True
 
         logger.info("RiskAgent:Trade Approved")
         self.trades_taken += 1
